@@ -1,0 +1,481 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Care</title>
+    <style>
+        /* General body styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        /* Header and Navigation */
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: center;
+            background-color: #0056b3;
+            padding: 10px;
+        }
+
+        .navbar button {
+            background: none;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .navbar button:hover {
+            background-color: #004085;
+        }
+
+        /* Main content container */
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Form and input styles */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .btn {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+        }
+
+        /* Content section styles */
+        .content-section {
+            display: none; /* Initially hide all sections */
+        }
+
+        .content-section.active {
+            display: block; /* Show active section */
+        }
+
+        /* Product and Ambulance lists */
+        .product-list, .location-list, .order-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .product-list li, .location-list li, .order-list li {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1>Health Care</h1>
+    </header>
+
+    <div class="navbar">
+        <button onclick="showSection('login')">Login</button>
+        <button onclick="logout()" id="logout-btn" style="display:none;">Logout</button>
+    </div>
+
+    <div class="container">
+
+        <div id="login" class="content-section active">
+            <h2>User Login</h2>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password">
+            </div>
+            <button onclick="handleLogin()" class="btn">Login</button>
+        </div>
+
+        <div id="customer-dashboard" class="content-section">
+            <h2>Welcome, Customer!</h2>
+            <div class="navbar">
+                <button onclick="showCustomerSection('buy-medicine')">Buy Medicine</button>
+                <button onclick="showCustomerSection('order-ambulance')">Order Ambulance</button>
+            </div>
+
+            <div id="buy-medicine" class="content-section active">
+                <h3>Available Medicines</h3>
+                <ul id="medicine-list" class="product-list"></ul>
+                <h3>Order Details</h3>
+                <div class="form-group">
+                    <label for="customerName">Name:</label>
+                    <input type="text" id="customerName">
+                </div>
+                <div class="form-group">
+                    <label for="customerAddress">Address:</label>
+                    <textarea id="customerAddress"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="customerMobile">Mobile Number:</label>
+                    <input type="tel" id="customerMobile">
+                </div>
+                <button onclick="placeOrder()" class="btn">Place Order</button>
+            </div>
+
+            <div id="order-ambulance" class="content-section">
+                <h3>Ambulance Service</h3>
+                <ul id="ambulance-locations" class="location-list"></ul>
+                <h3>Request Details</h3>
+                <div class="form-group">
+                    <label for="ambulanceName">Name:</label>
+                    <input type="text" id="ambulanceName">
+                </div>
+                <div class="form-group">
+                    <label for="ambulanceAddress">Address:</label>
+                    <textarea id="ambulanceAddress"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="ambulanceMobile">Mobile Number:</label>
+                    <input type="tel" id="ambulanceMobile">
+                </div>
+                <button onclick="requestAmbulance()" class="btn">Request Ambulance</button>
+            </div>
+        </div>
+
+        <div id="admin-dashboard" class="content-section">
+            <h2>Welcome, Admin!</h2>
+            <div class="navbar">
+                <button onclick="showAdminSection('add-medicine')">Add Medicine</button>
+                <button onclick="showAdminSection('add-shop')">Add Medical Shop</button>
+                <button onclick="showAdminSection('add-ambulance')">Add Ambulance</button>
+                <button onclick="showAdminSection('view-orders')">View Orders</button>
+                <button onclick="showAdminSection('view-ambulance-requests')">View Ambulance</button>
+            </div>
+
+            <div id="add-medicine" class="content-section active">
+                <h3>Add New Medicine</h3>
+                <div class="form-group">
+                    <label for="medName">Medicine Name:</label>
+                    <input type="text" id="medName">
+                </div>
+                <div class="form-group">
+                    <label for="medPrice">Price:</label>
+                    <input type="number" id="medPrice">
+                </div>
+                <button onclick="addMedicine()" class="btn">Add Medicine</button>
+            </div>
+
+            <div id="add-shop" class="content-section">
+                <h3>Add Medical Shop Location</h3>
+                <div class="form-group">
+                    <label for="shopName">Shop Name:</label>
+                    <input type="text" id="shopName">
+                </div>
+                <div class="form-group">
+                    <label for="shopLocation">Location:</label>
+                    <input type="text" id="shopLocation">
+                </div>
+                <button onclick="addShop()" class="btn">Add Shop</button>
+            </div>
+
+            <div id="add-ambulance" class="content-section">
+                <h3>Add Ambulance Location</h3>
+                <div class="form-group">
+                    <label for="ambuLocation">Ambulance Location:</label>
+                    <input type="text" id="ambuLocation">
+                </div>
+                <button onclick="addAmbulance()" class="btn">Add Ambulance</button>
+            </div>
+            
+            <div id="view-orders" class="content-section">
+                <h3>Customer Medicine Orders</h3>
+                <ul id="admin-medicine-orders" class="order-list"></ul>
+            </div>
+
+            <div id="view-ambulance-requests" class="content-section">
+                <h3>Customer Ambulance Requests</h3>
+                <ul id="admin-ambulance-requests" class="order-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data storage (in-memory for this example, not a real database)
+        let medicines = [
+            { name: "Paracetamol", price: 5.50 },
+            { name: "Ibuprofen", price: 8.75 }
+        ];
+        let ambulanceLocations = ["City General Hospital", "Downtown Clinic"];
+
+        // NEW: Arrays to store orders and requests
+        let medicineOrders = [];
+        let ambulanceRequests = [];
+
+        // Show a specific content section and hide others
+        function showSection(id) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(id).style.display = 'block';
+        }
+
+        // Handle the login process
+        function handleLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === 'admin' && password === 'welcome123') {
+                alert('Admin login successful!');
+                showSection('admin-dashboard');
+                document.getElementById('logout-btn').style.display = 'block';
+                renderAdminOrders(); // NEW: Render orders on login
+                renderAdminAmbulanceRequests(); // NEW: Render ambulance requests on login
+            } else if (username === 'customer' && password === 'password') {
+                alert('Customer login successful!');
+                showSection('customer-dashboard');
+                document.getElementById('logout-btn').style.display = 'block';
+                renderMedicines();
+                renderAmbulanceLocations();
+            } else {
+                alert('Invalid username or password.');
+            }
+        }
+
+        // Logout function
+        function logout() {
+            alert('Logged out.');
+            document.getElementById('logout-btn').style.display = 'none';
+            showSection('login');
+            // Clear input fields for security
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        // --- Customer Functions ---
+
+        function showCustomerSection(id) {
+            document.querySelectorAll('#customer-dashboard .content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(id).style.display = 'block';
+        }
+
+        // Render medicines on the customer page
+        function renderMedicines() {
+            const list = document.getElementById('medicine-list');
+            list.innerHTML = '';
+            medicines.forEach(med => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>${med.name} - $${med.price.toFixed(2)}</span>
+                    <button class="btn" onclick="addToCart('${med.name}')">Add to Cart</button>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        // Dummy add to cart function
+        function addToCart(medName) {
+            alert(`${medName} added to cart.`);
+        }
+
+        // Dummy order placement
+        function placeOrder() {
+            const name = document.getElementById('customerName').value;
+            const address = document.getElementById('customerAddress').value;
+            const mobile = document.getElementById('customerMobile').value;
+            const cartItems = [{name: 'Paracetamol', quantity: 2}]; // Dummy cart items
+
+            if (name && address && mobile) {
+                // NEW: Store the order in the medicineOrders array
+                medicineOrders.push({
+                    customerName: name,
+                    customerAddress: address,
+                    customerMobile: mobile,
+                    items: cartItems
+                });
+                alert(`Order placed successfully!\nName: ${name}\nAddress: ${address}\nMobile: ${mobile}`);
+            } else {
+                alert('Please fill in all order details.');
+            }
+        }
+
+        // Render ambulance locations
+        function renderAmbulanceLocations() {
+            const list = document.getElementById('ambulance-locations');
+            list.innerHTML = '';
+            ambulanceLocations.forEach(location => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span>Ambulance available at: ${location}</span>`;
+                list.appendChild(li);
+            });
+        }
+
+        // Dummy ambulance request
+        function requestAmbulance() {
+            const name = document.getElementById('ambulanceName').value;
+            const address = document.getElementById('ambulanceAddress').value;
+            const mobile = document.getElementById('ambulanceMobile').value;
+            
+            if (name && address && mobile) {
+                // NEW: Store the request in the ambulanceRequests array
+                ambulanceRequests.push({
+                    customerName: name,
+                    customerAddress: address,
+                    customerMobile: mobile
+                });
+                alert(`Ambulance request sent!\nName: ${name}\nAddress: ${address}\nMobile: ${mobile}`);
+            } else {
+                alert('Please fill in all ambulance request details.');
+            }
+        }
+
+        // --- Admin Functions ---
+
+        function showAdminSection(id) {
+            document.querySelectorAll('#admin-dashboard .content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(id).style.display = 'block';
+            
+            // NEW: Refresh the lists when the admin views the pages
+            if (id === 'view-orders') {
+                renderAdminOrders();
+            } else if (id === 'view-ambulance-requests') {
+                renderAdminAmbulanceRequests();
+            }
+        }
+
+        // Add medicine function (dummy)
+        function addMedicine() {
+            const name = document.getElementById('medName').value;
+            const price = parseFloat(document.getElementById('medPrice').value);
+            if (name && !isNaN(price)) {
+                medicines.push({ name, price });
+                alert(`${name} added successfully!`);
+                // Clear inputs
+                document.getElementById('medName').value = '';
+                document.getElementById('medPrice').value = '';
+            } else {
+                alert('Please enter a valid name and price.');
+            }
+        }
+        
+        // Add shop function (dummy)
+        function addShop() {
+            const shopName = document.getElementById('shopName').value;
+            const shopLocation = document.getElementById('shopLocation').value;
+            if (shopName && shopLocation) {
+                alert(`Medical shop "${shopName}" added at "${shopLocation}".`);
+                document.getElementById('shopName').value = '';
+                document.getElementById('shopLocation').value = '';
+            } else {
+                alert('Please enter a valid shop name and location.');
+            }
+        }
+
+        // Add ambulance function (dummy)
+        function addAmbulance() {
+            const location = document.getElementById('ambuLocation').value;
+            if (location) {
+                ambulanceLocations.push(location);
+                alert(`Ambulance added at "${location}".`);
+                document.getElementById('ambuLocation').value = '';
+            } else {
+                alert('Please enter a valid location.');
+            }
+        }
+        
+        // NEW: Render all customer medicine orders on the admin page
+        function renderAdminOrders() {
+            const list = document.getElementById('admin-medicine-orders');
+            list.innerHTML = '';
+            if (medicineOrders.length === 0) {
+                list.innerHTML = '<li>No new medicine orders.</li>';
+                return;
+            }
+            medicineOrders.forEach((order, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <strong>Order #${index + 1}</strong>
+                    <br>Customer: ${order.customerName}
+                    <br>Address: ${order.customerAddress}
+                    <br>Mobile: ${order.customerMobile}
+                    <br>Items: ${order.items.map(item => `${item.name} (x${item.quantity})`).join(', ')}
+                `;
+                list.appendChild(li);
+            });
+        }
+        
+        // NEW: Render all customer ambulance requests on the admin page
+        function renderAdminAmbulanceRequests() {
+            const list = document.getElementById('admin-ambulance-requests');
+            list.innerHTML = '';
+            if (ambulanceRequests.length === 0) {
+                list.innerHTML = '<li>No new ambulance requests.</li>';
+                return;
+            }
+            ambulanceRequests.forEach((request, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <strong>Ambulance Request #${index + 1}</strong>
+                    <br>Customer: ${request.customerName}
+                    <br>Address: ${request.customerAddress}
+                    <br>Mobile: ${request.customerMobile}
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        // Initial state
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('login');
+        });
+    </script>
+</body>
+</html>
